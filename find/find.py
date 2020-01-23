@@ -9,7 +9,7 @@ import fnmatch
 # Use for just single file input without any options.
 def find_file(target: str) -> bool:
     if target == ".":
-        # If user want use find . , then we just print all files from current direcotry.
+        # If user want use find . , then we just print all files from current directory.
         for root, dirs, files in os.walk(".", topdown=False):
             for name in files:
                 print(os.path.join(root, name))
@@ -45,24 +45,32 @@ def inameSearch(target: str) -> list[str]:
 def sizeSearch(size: int) -> list[str]:  # size repersent 512b*size space.
     
 
+def decideSearchType(target_list: list[str]):
+    option: str = target_list[0]
+    if option == "-name":
+        filelist: list[str] = nameSearch(target_list[1])
+    if option == "-size":
+        
+    if option == "iname":
+        filelist: list[str] = inameSearch(target_list[1])
+    if option == "-executable":
 
+    if option == "-gid":
+
+    else: 
+        return False
 def options(target_list: List[str]) -> bool:
+    # A legal gramma should be Find opiton target or Find target1 target2
     if len(target_list) == 2:
-        target: str = target_list[0]
-        k = 1
-    if len(target_list) == 4:
-        target: str = target_list[2]
-        k = 3
-    if target == "-name":
-        filelist: list[str] = nameSearch(target_list[k])
-    if target == "-size":
-
-    if target == "iname":
-        filelist: list[str] = inameSearch(target_list[k])
-    if target == "-executable":
-
-    if target == "-gid":
-    
+        return decideSearchType(target_list)
+    # Find target_directory option target
+    if len(target_list) == 3:
+        try:
+            os.chdir(target_list[0])
+            target_list
+            decideSearchType(target_list[1:])
+        except FileNotFoundError:
+            return False
         return True
     else:
         return False
@@ -72,13 +80,13 @@ def main():
     while 1:
         var: str = input(">")
         if len(var) > 4 and var[:4] == "find":
-            input_list: list[str] = var[4::].split()
+            input_list: list[str] = var[4:].split()
             if len(input_list) == 1:
                 if input_list[0] == "-executable":
                     
                 if not find_file(input_list[0]):
                     print("find: '%s': No such file or directory" % input_list[0])
-            if len(input_list) == 2:
+            else:
                 suc: bool = options(input_list)
                 if not suc:
                     for file in input_list:
